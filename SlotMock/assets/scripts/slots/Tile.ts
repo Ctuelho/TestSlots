@@ -5,6 +5,9 @@ export default class Tile extends cc.Component {
   @property({ type: [cc.SpriteFrame], visible: true })
   private textures = [];
 
+  @property({ type: [cc.Node], visible: true })
+  public glow = null;
+
   async onLoad(): Promise<void> {
     await this.loadTextures();
   }
@@ -40,5 +43,14 @@ export default class Tile extends cc.Component {
     
     const randomIndex = randomIndexes[Math.floor(Math.random() * randomIndexes.length)];
     this.setTile(randomIndex);
+  }
+
+  setGlow(doGlow: boolean) {
+    this.glow.active = doGlow;
+    if(doGlow) {
+      //reset the animation to frame 0
+      const skeleton = this.glow.getComponent('sp.Skeleton');
+      skeleton.setAnimation(0, 'loop', true);
+    }
   }
 }

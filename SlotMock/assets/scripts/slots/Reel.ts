@@ -81,15 +81,18 @@ export default class Reel extends cc.Component {
       if (this.result != null && this.result.length > 0) {
         pop = this.result.pop();
       }
+      let tile = el.getComponent('Tile');
       if (pop != null && pop[0] >= 0) {
-        el.getComponent('Tile').setTile(pop[0]);
+        tile.setTile(pop[0]);
         //enable the glow
         if(pop[1]){
           setTimeout(() => {
-          }, (this.glowDelay));
+            tile.setGlow(true);
+          }, (this.glowDelay * 1000));
         }
       } else {
-        el.getComponent('Tile').setRandom(this.exclude);
+        tile.setRandom(this.exclude);
+        tile.setGlow(false);
       }
     }
   }
