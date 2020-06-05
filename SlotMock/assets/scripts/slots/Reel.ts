@@ -32,6 +32,8 @@ export default class Reel extends cc.Component {
     }
   }
 
+  private tilesTextures: Array<cc.SpriteFrame>;
+    
   private result: Array<Array<number>> = [];
 
   //tiles to be excluded of random selection
@@ -42,6 +44,11 @@ export default class Reel extends cc.Component {
 
   public stopSpinning = false;
 
+  setTilesTextures(newTilesTextures: Array<cc.SpriteFrame>) : void {
+    this.tilesTextures = newTilesTextures;
+    this.shuffle();
+  }
+
   createReel(): void {
     let newTile: cc.Node;
     for (let i = 0; i < 5; i += 1) {
@@ -51,12 +58,14 @@ export default class Reel extends cc.Component {
     }
   }
 
+  //randomize the tiles
   shuffle(): void {
     for (let i = 0; i < this.tiles.length; i += 1) {
-      this.tiles[i].getComponent('Tile').setRandom();
+      this.tiles[i].getComponent('Tile').setRandom(this.tilesTextures);
     }
   }
 
+  //called when the stop button was pressed and has a result ready
   readyStop(newResult: Array<Array<number>>, newGlowDelay : number = 0): void {
     const check = this.spinDirection === Aux.Direction.Down || newResult == null;
     this.result = check ? newResult : newResult.reverse();
@@ -71,6 +80,7 @@ export default class Reel extends cc.Component {
     }
   }
 
+  //changes the tile, called at the end of each animation sequence
   changeCallback(element: cc.Node = null): void {
     const el = element;
     const dirModifier = this.spinDirection === Aux.Direction.Down ? -1 : 1;
@@ -83,7 +93,7 @@ export default class Reel extends cc.Component {
       }
       let tile = el.getComponent('Tile');
       if (pop != null && pop[0] >= 0) {
-        tile.setTile(pop[0]);
+        tile.setTile(this.tilesTextures[pop[0]]);
         //enable the glow
         if(pop[1]){
           setTimeout(() => {
@@ -91,7 +101,8 @@ export default class Reel extends cc.Component {
           }, (this.glowDelay * 1000));
         }
       } else {
-        tile.setRandom(this.exclude);
+        //if pop is null or pop[0] <= -1 set a random tile
+        tile.setRandom(this.tilesTextures, this.exclude);
         tile.setGlow(false);
       }
     }
