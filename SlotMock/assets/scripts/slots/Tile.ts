@@ -28,8 +28,17 @@ export default class Tile extends cc.Component {
     this.node.getComponent(cc.Sprite).spriteFrame = this.textures[index];
   }
 
-  setRandom(): void {
-    const randomIndex = Math.floor(Math.random() * this.textures.length);
+  setRandom(exclude: Array<number> = null): void {
+    //get all possible tiles indexes
+    let randomIndexes = Array.from(Array(this.textures.length).keys());
+
+    //filter the possible tiles, removing the tiles present in the result
+    //so it won't accidentally repeat the tile
+    if(exclude != null && exclude.length > 0){
+      randomIndexes = randomIndexes.filter( ( el ) => !exclude.includes( el ) );
+    }
+    
+    const randomIndex = randomIndexes[Math.floor(Math.random() * randomIndexes.length)];
     this.setTile(randomIndex);
   }
 }

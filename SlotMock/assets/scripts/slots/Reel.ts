@@ -32,7 +32,13 @@ export default class Reel extends cc.Component {
     }
   }
 
-  private result: Array<number> = [];
+  private result: Array<Array<number>> = [];
+
+  //tiles to be excluded of random selection
+  private exclude: Array<number> = [];
+
+  //timer to start the glow
+  private glowDelay: number = 0;
 
   public stopSpinning = false;
 
@@ -51,10 +57,18 @@ export default class Reel extends cc.Component {
     }
   }
 
-  readyStop(newResult: Array<number>): void {
+  readyStop(newResult: Array<Array<number>>, newGlowDelay : number = 0): void {
     const check = this.spinDirection === Aux.Direction.Down || newResult == null;
     this.result = check ? newResult : newResult.reverse();
     this.stopSpinning = true;
+    this.glowDelay = newGlowDelay;
+    this.exclude = null;
+    if(newResult != null){
+      this.exclude = [];
+      for(let i = 0; i < this.result.length; i += 1){
+        this.exclude.push(this.result[i][0]);
+      }
+    }
   }
 
   changeCallback(element: cc.Node = null): void {
@@ -67,11 +81,15 @@ export default class Reel extends cc.Component {
       if (this.result != null && this.result.length > 0) {
         pop = this.result.pop();
       }
-
-      if (pop != null && pop >= 0) {
-        el.getComponent('Tile').setTile(pop);
+      if (pop != null && pop[0] >= 0) {
+        el.getComponent('Tile').setTile(pop[0]);
+        //enable the glow
+        if(pop[1]){
+          setTimeout(() => {
+          }, (this.glowDelay));
+        }
       } else {
-        el.getComponent('Tile').setRandom();
+        el.getComponent('Tile').setRandom(this.exclude);
       }
     }
   }
