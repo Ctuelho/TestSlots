@@ -83,7 +83,7 @@ export default class Machine extends cc.Component {
     this.button.getComponent(cc.Button).interactable = false;
   }
 
-  stop(result: Array<Array<number>> = null): void {
+  stop(result: Array<Array<Array<number>>> = null): void {
     setTimeout(() => {
       this.spinning = false;
       this.button.getComponent(cc.Button).interactable = true;
@@ -91,12 +91,13 @@ export default class Machine extends cc.Component {
     }, 2500);
 
     const rngMod = Math.random() / 2;
+    //wait to all tiles glow together
+    const glowDelay = rngMod + rngMod * (this.numberOfReels - 2) + this.numberOfReels / 4;
     for (let i = 0; i < this.numberOfReels; i += 1) {
       const spinDelay = i < 2 + rngMod ? i / 4 : rngMod * (i - 2) + i / 4;
       const theReel = this.reels[i].getComponent('Reel');
-
       setTimeout(() => {
-        theReel.readyStop(result[i]);
+        theReel.readyStop(result[i], glowDelay - spinDelay);
       }, spinDelay * 1000);
     }
   }
