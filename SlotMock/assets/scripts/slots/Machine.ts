@@ -92,7 +92,7 @@ export default class Machine extends cc.Component {
 
     const rngMod = Math.random() / 2;
     //wait to all tiles glow together
-    const glowDelay = rngMod + rngMod * (this.numberOfReels - 2) + this.numberOfReels / 4;
+    const glowDelay = rngMod + rngMod * (this.numberOfReels - 3) + (this.numberOfReels - 1) / 4;
     for (let i = 0; i < this.numberOfReels; i += 1) {
       const spinDelay = i < 2 + rngMod ? i / 4 : rngMod * (i - 2) + i / 4;
       const theReel = this.reels[i].getComponent('Reel');
