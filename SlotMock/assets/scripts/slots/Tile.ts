@@ -2,7 +2,7 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class Tile extends cc.Component {
-  @property({ type: [cc.Node], visible: true })
+  @property({ type: cc.Node, visible: true })
   public glow = null;
   
   setTile(tile: cc.SpriteFrame): void {
@@ -24,6 +24,7 @@ export default class Tile extends cc.Component {
   }
 
   setGlow(doGlow: boolean) {
+    //set the glow effect visible/invisible
     this.glow.active = doGlow;
     if(doGlow) {
       //reset the animation to frame 0

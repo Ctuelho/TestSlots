@@ -12,28 +12,8 @@ export default class GameManager extends cc.Component {
 
   private result = null;
 
-  async onLoad(): Promise<void> {
-    await this.loadTextures();
-  }
-
-  async resetInEditor(): Promise<void> {
-    await this.loadTextures();
-  }
-
-  async loadTextures(): Promise<boolean> {
-    const self = this;
-    return new Promise<boolean>(resolve => {
-      cc.loader.loadResDir('gfx/Square', cc.SpriteFrame, function afterLoad(err, loadedTextures) {
-        self.createMachine(loadedTextures);
-        console.log("LOADED TEXTURES");
-        resolve(true);
-      });
-    });
-  }
-
-  start(): void {
-    console.log("START");
-    
+  start() : void  {
+    this.createMachine();
   }
 
   update(): void {
@@ -61,6 +41,7 @@ export default class GameManager extends cc.Component {
     this.result = await this.getAnswer();
   }
 
+  //generates an array containing the result
   getAnswer(): Promise<Array<Array<Array<number>>>> {
     let slotResult = [];
     let probability = Math.ceil(Math.random() * 100);
@@ -80,27 +61,27 @@ export default class GameManager extends cc.Component {
   }
 
   matchOneRow() : Array<Array<Array<number>>> {
+    const machine = this.machine.getComponent('Machine');
     const rows = 3; //the number of rows displayed per result
-    const tiles = 30; //the number of possible tiles textures
+    const tiles = machine.tilesTextures.length; //the number of possible tiles textures
 
     //decide which row will be matched
     let row = Math.floor(Math.random() * rows);
 
-    //decide wich tile will be displayed
+    //decide which tile will be displayed
     let tile = Math.floor(Math.random() * tiles);
 
     //fill the result
     let result = [];
-    let machine = this.machine.getComponent('Machine');
     for(let i = 0; i < machine._numberOfReels; i += 1) {
-      result.push([]);
+      result.push([]); //push the reel info into result
       for(let j = 0; j < rows; j += 1){
         if(j == row){
           //set the tile and the glow on for this row
           result[i][j] = [tile, 1];
         }
         else {
-          //set a random tile and turn off the glow
+          //set a random tile and turn off the glow for this row
           result[i][j] = [-1, 0];
         }
       }
@@ -109,26 +90,26 @@ export default class GameManager extends cc.Component {
   }
 
   matchTwoRows() : Array<Array<Array<number>>> {
+    const machine = this.machine.getComponent('Machine');
     const rows = 3; //the number of rows displayed per result
-    const tiles = 30; //the number of possible tiles textures
+    const tiles = machine.tilesTextures.length; //the number of possible tiles textures
     
     //decide which rows will not be matched
     let possibleRows = Array.from(Array(rows).keys());
     let row1 = possibleRows[Math.floor(Math.random() * possibleRows.length)];
-    possibleRows.splice(possibleRows.indexOf(row1), 1);
+    possibleRows.splice(possibleRows.indexOf(row1), 1); //remove the already selected row
     let row2 = possibleRows[Math.floor(Math.random() * possibleRows.length)];
 
-    //decide wich tiles will be displayed
+    //decide which tiles will be displayed
     let possibleTiles = Array.from(Array(tiles).keys());
     let tile1 = possibleTiles[Math.floor(Math.random() * possibleTiles.length)];
-    possibleTiles.splice(possibleTiles.indexOf(tile1), 1);
+    possibleTiles.splice(possibleTiles.indexOf(tile1), 1); //remove the already selected tile
     let tile2 = possibleTiles[Math.floor(Math.random() * possibleTiles.length)];
 
     //fill the result
     let result = [];
-    let machine = this.machine.getComponent('Machine');
     for (let i = 0; i < machine._numberOfReels; i += 1) {
-      result.push([]);
+      result.push([]); //push the reel info into result
       for (let j = 0; j < rows; j += 1){
         if (j == row1) {
           //set the tile and the glow on for this row
@@ -139,7 +120,7 @@ export default class GameManager extends cc.Component {
           result[i][j] = [tile2, 1];
         }
         else {
-          //set a random tile and turn off the glow
+          //set a random tile and turn off the glow for this row
           result[i][j] = [-1, 0];
         }
       }
@@ -148,23 +129,23 @@ export default class GameManager extends cc.Component {
   }
 
   matchAllRows() : Array<Array<Array<number>>> {
+    const machine = this.machine.getComponent('Machine');
     const rows = 3; //the number of rows displayed per result
-    const tiles = 30; //the number of possible tiles textures
+    const tiles = machine.tilesTextures.length; //the number of possible tiles textures
 
     //decide which tiles will be displayed
     let possibleTiles = Array.from(Array(tiles).keys());
     let tile1 = possibleTiles[Math.floor(Math.random() * possibleTiles.length)];
-    possibleTiles.splice(possibleTiles.indexOf(tile1), 1);
+    possibleTiles.splice(possibleTiles.indexOf(tile1), 1); //remove the already selected tile
     let tile2 = possibleTiles[Math.floor(Math.random() * possibleTiles.length)];
-    possibleTiles.splice(possibleTiles.indexOf(tile2), 1);
+    possibleTiles.splice(possibleTiles.indexOf(tile2), 1); //remove the already selected tile
     let tile3 = possibleTiles[Math.floor(Math.random() * possibleTiles.length)];
 
     //fill the result
     let result = [];
-    let machine = this.machine.getComponent('Machine');
     for (let i = 0; i < machine._numberOfReels; i += 1) {
-      result.push([]);
-      for (let j = 0; j < rows; j += 1){
+      result.push([]); //push the reel info into result
+      for (let j = 0; j < rows; j += 1) {
         if (j == 0) {
           //set the tile and the glow on for this row
           result[i][j] = [tile1, 1];
@@ -187,7 +168,7 @@ export default class GameManager extends cc.Component {
     this.machine.getComponent('Machine').stop(resultRelayed);
   }
 
-  createMachine(tilesTextures : Array<cc.SpriteFrame>) : void {
-    this.machine.getComponent('Machine').createMachine(tilesTextures);
+  createMachine() : void {
+    this.machine.getComponent('Machine').createMachine();
   }
 }
