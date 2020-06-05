@@ -32,6 +32,8 @@ export default class Reel extends cc.Component {
     }
   }
 
+  private tilesTextures: Array<cc.SpriteFrame>;
+    
   private result: Array<Array<number>> = [];
 
   //tiles to be excluded of random selection
@@ -41,6 +43,11 @@ export default class Reel extends cc.Component {
   private glowDelay: number = 0;
 
   public stopSpinning = false;
+
+  setTilesTextures(newTilesTextures: Array<cc.SpriteFrame>) : void {
+    this.tilesTextures = newTilesTextures;
+    this.shuffle();
+  }
 
   createReel(): void {
     let newTile: cc.Node;
@@ -53,7 +60,7 @@ export default class Reel extends cc.Component {
 
   shuffle(): void {
     for (let i = 0; i < this.tiles.length; i += 1) {
-      this.tiles[i].getComponent('Tile').setRandom();
+      this.tiles[i].getComponent('Tile').setRandom(this.tilesTextures);
     }
   }
 
@@ -83,7 +90,7 @@ export default class Reel extends cc.Component {
       }
       let tile = el.getComponent('Tile');
       if (pop != null && pop[0] >= 0) {
-        tile.setTile(pop[0]);
+        tile.setTile(this.tilesTextures[pop[0]]);
         //enable the glow
         if(pop[1]){
           setTimeout(() => {
@@ -91,7 +98,7 @@ export default class Reel extends cc.Component {
           }, (this.glowDelay * 1000));
         }
       } else {
-        tile.setRandom(this.exclude);
+        tile.setRandom(this.tilesTextures, this.exclude);
         tile.setGlow(false);
       }
     }

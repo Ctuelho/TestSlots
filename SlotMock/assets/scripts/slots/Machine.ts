@@ -44,7 +44,7 @@ export default class Machine extends cc.Component {
 
   public spinning = false;
 
-  createMachine(): void {
+  createMachine(tilesTextures : Array<cc.SpriteFrame>): void {
     this.node.destroyAllChildren();
     this.reels = [];
 
@@ -55,6 +55,7 @@ export default class Machine extends cc.Component {
       this.reels[i] = newReel;
 
       const reelScript = newReel.getComponent('Reel');
+      reelScript.tilesTextures = tilesTextures;
       reelScript.shuffle();
       reelScript.reelAnchor.getComponent(cc.Layout).enabled = false;
     }

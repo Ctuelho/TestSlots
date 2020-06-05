@@ -12,8 +12,28 @@ export default class GameManager extends cc.Component {
 
   private result = null;
 
+  async onLoad(): Promise<void> {
+    await this.loadTextures();
+  }
+
+  async resetInEditor(): Promise<void> {
+    await this.loadTextures();
+  }
+
+  async loadTextures(): Promise<boolean> {
+    const self = this;
+    return new Promise<boolean>(resolve => {
+      cc.loader.loadResDir('gfx/Square', cc.SpriteFrame, function afterLoad(err, loadedTextures) {
+        self.createMachine(loadedTextures);
+        console.log("LOADED TEXTURES");
+        resolve(true);
+      });
+    });
+  }
+
   start(): void {
-    this.machine.getComponent('Machine').createMachine();
+    console.log("START");
+    
   }
 
   update(): void {
@@ -165,5 +185,9 @@ export default class GameManager extends cc.Component {
   informStop(): void {
     const resultRelayed = this.result;
     this.machine.getComponent('Machine').stop(resultRelayed);
+  }
+
+  createMachine(tilesTextures : Array<cc.SpriteFrame>) : void {
+    this.machine.getComponent('Machine').createMachine(tilesTextures);
   }
 }
